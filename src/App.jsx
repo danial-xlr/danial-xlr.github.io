@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import {
+  About,
   Education,
   Experience,
   Footer,
@@ -24,20 +25,21 @@ export default function App() {
       <main>
         <Hero />
         <Box sx={shaded}>
-          <Publications />
+          <About />
         </Box>
-        <Research />
+        <Publications />
         <Box sx={shaded}>
-          <Education />
+          <Research />
         </Box>
-        <Experience />
+        <Education />
         <Box sx={shaded}>
-          <Projects />
+          <Experience />
         </Box>
-        <Skills />
+        <Projects />
         <Box sx={shaded}>
-          <Honors />
+          <Skills />
         </Box>
+        <Honors />
       </main>
       <Footer />
     </>

@@ -9,8 +9,15 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import ApiRoundedIcon from '@mui/icons-material/ApiRounded';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import CloudOutlinedIcon from '@mui/icons-material/CloudOutlined';
 import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
+import HubOutlinedIcon from '@mui/icons-material/HubOutlined';
+import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
+import TerminalRoundedIcon from '@mui/icons-material/TerminalRounded';
 import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -21,9 +28,11 @@ import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import TranslateRoundedIcon from '@mui/icons-material/TranslateRounded';
 
 import {
+  about,
   education,
   honors,
   languages,
+  operatingSystems,
   profile,
   projects,
   publications,
@@ -52,6 +61,44 @@ function IconBadge({ icon, color = 'primary' }) {
     >
       {icon}
     </Box>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+export function About() {
+  return (
+    <Section id="about" overline="About me" title="Research meets production">
+      <Grid container spacing={{ xs: 4, md: 6 }}>
+        <Grid item xs={12} md={7}>
+          <Reveal>
+            <Stack spacing={2.5}>
+              {about.paragraphs.map((paragraph) => (
+                <Typography key={paragraph} variant="body1" sx={{ color: 'text.secondary' }}>
+                  {paragraph}
+                </Typography>
+              ))}
+            </Stack>
+          </Reveal>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Reveal delay={100}>
+            <Card sx={{ p: { xs: 3, md: 4 } }}>
+              <Stack divider={<Divider sx={{ borderStyle: 'dashed' }} />} spacing={2}>
+                {about.facts.map((fact) => (
+                  <Box key={fact.label}>
+                    <Typography variant="overline" sx={{ color: 'text.disabled' }}>
+                      {fact.label}
+                    </Typography>
+                    <Typography variant="subtitle1">{fact.value}</Typography>
+                  </Box>
+                ))}
+              </Stack>
+            </Card>
+          </Reveal>
+        </Grid>
+      </Grid>
+    </Section>
   );
 }
 
@@ -104,9 +151,23 @@ export function Publications() {
                     {pub.venue}
                   </Typography>
 
-                  <Typography variant="body1" sx={{ mt: 2, color: 'text.secondary' }}>
+                  <Typography variant="body1" sx={{ mt: 2 }}>
                     {pub.summary}
                   </Typography>
+
+                  <Stack spacing={1.5} sx={{ mt: 2 }}>
+                    {pub.details.map((paragraph) => (
+                      <Typography key={paragraph} variant="body2" sx={{ color: 'text.secondary' }}>
+                        {paragraph}
+                      </Typography>
+                    ))}
+                  </Stack>
+
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 3 }}>
+                    {pub.tags.map((tag) => (
+                      <Label key={tag}>{tag}</Label>
+                    ))}
+                  </Stack>
                 </Box>
               </Stack>
             </Card>
@@ -126,7 +187,7 @@ export function Research() {
         {research.map((item, index) => (
           <Grid item xs={12} md={6} key={item.title}>
             <Reveal delay={index * 100}>
-              <Card sx={{ p: { xs: 3, md: 4 }, height: 1 }}>
+              <Card sx={{ p: { xs: 3, md: 4 }, height: 1, display: 'flex', flexDirection: 'column' }}>
                 <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
                   <Label color="primary">{item.kind}</Label>
                   <Label>{item.period}</Label>
@@ -137,7 +198,15 @@ export function Research() {
                 <Typography variant="body2" sx={{ mt: 0.5, mb: 2, color: 'text.disabled' }}>
                   {item.supervisor}
                 </Typography>
-                <Bullets items={item.points} />
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  {item.overview}
+                </Typography>
+                <Bullets items={item.points} sx={{ flexGrow: 1 }} />
+                <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 2 }}>
+                  {item.tags.map((tag) => (
+                    <Label key={tag}>{tag}</Label>
+                  ))}
+                </Stack>
               </Card>
             </Reveal>
           </Grid>
@@ -213,7 +282,17 @@ export function Experience() {
                       <Label>{job.period}</Label>
                     </Box>
                   </Stack>
+                  <Typography variant="body2" sx={{ mb: 1.5 }}>
+                    {job.summary}
+                  </Typography>
                   <Bullets items={job.points} />
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 2 }}>
+                    {job.stack.map((tech) => (
+                      <Label key={tech} color="primary">
+                        {tech}
+                      </Label>
+                    ))}
+                  </Stack>
                 </Card>
               </Reveal>
             </TimelineItem>
@@ -300,32 +379,107 @@ export function Projects() {
 
 // ----------------------------------------------------------------------
 
+const SKILL_ICONS = {
+  languages: { icon: <CodeRoundedIcon />, color: 'primary' },
+  backend: { icon: <ApiRoundedIcon />, color: 'info' },
+  distributed: { icon: <HubOutlinedIcon />, color: 'secondary' },
+  cloud: { icon: <CloudOutlinedIcon />, color: 'info' },
+  data: { icon: <StorageRoundedIcon />, color: 'warning' },
+  research: { icon: <ScienceOutlinedIcon />, color: 'primary' },
+  ml: { icon: <PsychologyOutlinedIcon />, color: 'secondary' },
+};
+
+function SkillChip({ skill }) {
+  return (
+    <Chip
+      size="small"
+      label={skill.name}
+      icon={
+        skill.core ? (
+          <Box
+            component="span"
+            sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'primary.main', ml: '8px !important' }}
+          />
+        ) : undefined
+      }
+      sx={(theme) =>
+        skill.core
+          ? {
+              fontWeight: 600,
+              color: theme.palette.primary.light,
+              bgcolor: alpha(theme.palette.primary.main, 0.16),
+            }
+          : { color: 'text.secondary', bgcolor: 'background.neutral' }
+      }
+    />
+  );
+}
+
 export function Skills() {
   return (
-    <Section id="skills" overline="Skills" title="Toolbox">
+    <Section id="skills" overline="Skills" title="Technical background">
       <Reveal>
-        <Card sx={{ p: { xs: 3, md: 4 } }}>
-          <Stack divider={<Divider sx={{ borderStyle: 'dashed' }} />} spacing={2.5}>
-            {skills.map((group) => (
-              <Stack
-                key={group.group}
-                direction={{ xs: 'column', md: 'row' }}
-                spacing={{ xs: 1.5, md: 3 }}
-                alignItems={{ md: 'center' }}
-              >
-                <Typography variant="subtitle2" sx={{ width: { md: 200 }, flexShrink: 0 }}>
-                  {group.group}
-                </Typography>
-                <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1}>
-                  {group.items.map((skill) => (
-                    <Chip key={skill} label={skill} size="small" sx={{ bgcolor: 'background.neutral' }} />
-                  ))}
-                </Stack>
-              </Stack>
-            ))}
-          </Stack>
-        </Card>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={1}
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          sx={{ mt: -2, mb: 4, color: 'text.secondary' }}
+        >
+          <SkillChip skill={{ name: 'Highlighted', core: true }} />
+          <Typography variant="body2">used in my work experience and projects above.</Typography>
+        </Stack>
       </Reveal>
+
+      <Grid container spacing={3}>
+        {skills.map((group, index) => {
+          const { icon, color } = SKILL_ICONS[group.key];
+          return (
+            <Grid item xs={12} sm={6} md={4} key={group.key}>
+              <Reveal delay={(index % 3) * 80}>
+                <Card sx={{ p: 3, height: 1 }}>
+                  <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                    <IconBadge icon={icon} color={color} />
+                    <Box>
+                      <Typography variant="subtitle1" component="h3" sx={{ lineHeight: 1.3 }}>
+                        {group.title}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                        {group.items.length} skills
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                    {group.blurb}
+                  </Typography>
+                  <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.75}>
+                    {group.items.map((skill) => (
+                      <SkillChip key={skill.name} skill={skill} />
+                    ))}
+                  </Stack>
+                </Card>
+              </Reveal>
+            </Grid>
+          );
+        })}
+
+        <Grid item xs={12} sm={6} md={4}>
+          <Reveal delay={240}>
+            <Card sx={{ p: 3, height: 1 }}>
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <IconBadge icon={<TerminalRoundedIcon />} color="warning" />
+                <Typography variant="subtitle1" component="h3">
+                  Operating Systems
+                </Typography>
+              </Stack>
+              <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.75}>
+                {operatingSystems.map((os) => (
+                  <SkillChip key={os} skill={{ name: os }} />
+                ))}
+              </Stack>
+            </Card>
+          </Reveal>
+        </Grid>
+      </Grid>
     </Section>
   );
 }
@@ -342,7 +496,7 @@ export function Honors() {
               <Stack spacing={2.5}>
                 {honors.map((honor) => (
                   <Stack key={honor.text} direction="row" spacing={2} alignItems="flex-start">
-                    <Label color="primary" sx={{ mt: 0.25 }}>
+                    <Label color="primary" sx={{ mt: 0.25, minWidth: 44, justifyContent: 'center' }}>
                       {honor.year}
                     </Label>
                     <Box>

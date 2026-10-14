@@ -71,6 +71,7 @@ export function Reveal({ children, delay = 0 }) {
     <Box
       ref={ref}
       sx={{
+        height: 1,
         opacity: inView ? 1 : 0,
         transform: inView ? 'none' : 'translateY(24px)',
         transition: `opacity 600ms ease ${delay}ms, transform 600ms ease ${delay}ms`,

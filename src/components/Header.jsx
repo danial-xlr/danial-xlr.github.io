@@ -17,6 +17,7 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { profile } from '../data/resume';
 
 export const NAV = [
+  { id: 'about', label: 'About' },
   { id: 'publications', label: 'Publications' },
   { id: 'research', label: 'Research' },
   { id: 'education', label: 'Education' },
@@ -68,7 +69,7 @@ export function Header() {
             </Box>
           </Typography>
 
-          <Box component="nav" sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5, mr: 2 }}>
+          <Box component="nav" sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.5, mr: 2 }}>
             {NAV.map((item) => (
               <Button
                 key={item.id}
@@ -94,7 +95,7 @@ export function Header() {
           <IconButton
             aria-label="Open navigation"
             onClick={() => setOpen(true)}
-            sx={{ display: { md: 'none' }, ml: 1 }}
+            sx={{ display: { lg: 'none' }, ml: 1 }}
           >
             <MenuRoundedIcon />
           </IconButton>
